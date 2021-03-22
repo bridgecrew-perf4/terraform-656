@@ -71,6 +71,8 @@ resource "google_compute_firewall" "mad-test-firewall100200" {
      protocol   = "tcp"
      ports      = ["22", "3306"]
    }
+    target_tags   = ["terraform-db"]
+    direction     = "INGRESS"
 }
 resource "google_compute_firewall" "mad-test-firewall200300" {
   name    = "yep-mad-test-firewall200300"
