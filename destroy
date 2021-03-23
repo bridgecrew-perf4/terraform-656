@@ -21,7 +21,7 @@ resource "google_compute_instance" "app" {
     }
  }
 # metadata = {
-#     ssh-keys = "madeline.hendr:${file("/.ssh/id_rsa.pub")}"
+#     ssh-keys = "debian:${file("/.ssh/id_rsa.pub")}"
 #  }
  provisioner "remote-exec" {
     connection {
@@ -29,7 +29,7 @@ resource "google_compute_instance" "app" {
       type        = "ssh"
       user        = "debian"
       timeout     = "30s"
-#      private_key = "${file("ssh-keys")}"
+#      private_key = "${file("/.ssh/id_rsa.pub")}"
     }
     inline = ["terraform destroy -target=google_compute_instance.db -target=google_compute_$
  }
