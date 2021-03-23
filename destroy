@@ -1,4 +1,5 @@
 provider "google" {
+#added keys and credentials to sa.json
   credentials = "${file("sa.json")}"
   region  = "us-central1"
   project = "my-ansible-class"
