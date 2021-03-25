@@ -1,6 +1,6 @@
 provider "google" {
 #added keys and credentials to sa.json
-  credentials = "${file("sa.json")}"
+  credentials = "sa.json"
   region  = "us-central1"
   project = "my-ansible-class"
   zone    = "us-central1-a"
@@ -19,20 +19,24 @@ resource "google_compute_instance" "app" {
     access_config {
       // Ephemeral IP
     }
- }
-# metadata = {
-#     ssh-keys = "debian:${file("/.ssh/id_rsa.pub")}"
+  }
+ 
+# provisioner "file" {
+#    source      = "home/madeline_hendr_gmail_com/sa.json"
+#    destination = "/home/debian/sa.json"
 #  }
  provisioner "remote-exec" {
     connection {
-      host        = "${google_compute_instance.app.network_interface.0.access_config.0.nat_$
+      host        = "${google_compute_instance.app.network_interface.0.access_config.0.nat_ip}"
       type        = "ssh"
-      user        = "debian"
+      user        = "madeline_hendr_gmail_com"
+      agent       = false
       timeout     = "30s"
-#      private_key = "${file("/.ssh/id_rsa.pub")}"
+#      private_key = "${file("~/.ssh/google_compute_engine")}"
     }
-    inline = ["terraform destroy -target=google_compute_instance.db -target=google_compute_$
- }
+    inline = [ "terraform destroy -target google_compute_instance.db -target google_compute_instance.elasticsearch" ]
+  }
+
 }
  resource "google_compute_instance" "db" {
   name         = "terraform-db"
@@ -42,10 +46,27 @@ resource "google_compute_instance" "app" {
     initialize_params {
       image = "debian-cloud/debian-9"
     }
+   }
     network_interface {
     network = "default"
   }
 }
+
+resource "google_compute_instance" "electicsearch" {
+  name         = "terraform-elasticsearch"
+  machine_type = "e2-medium"
+  zone         = "us-central1-a"
+  boot_disk {
+    initialize_params {
+      image = "debian-cloud/debian-9"
+    }
+   }
+    network_interface {
+    network = "default"
+  }
+}
+
+
 resource "google_compute_firewall" "default" {
   name    = "test-firewall"
   network = google_compute_network.default.name
